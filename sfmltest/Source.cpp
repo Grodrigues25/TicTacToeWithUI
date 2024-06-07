@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <string>
 
 using namespace std;
 
@@ -80,6 +81,11 @@ int main()
     sf::RectangleShape background(sf::Vector2f(windowSize, windowSize));
     background.setFillColor(sf::Color::White);
 
+    //GAME DATA STRUCTURES
+    string board[3][3] = { {" "," "," "},{" "," "," "},{" "," "," "} };
+    int winStatus;
+    sf::Vector2i localPosition;
+
     //WHILE WINDOW IS OPEN LOGIC AKA WHILE THE GAME IS RUNNING
     while (window.isOpen())
     {
@@ -95,19 +101,68 @@ int main()
 
         generateMap(window);
         
-        generateCrosses(window);
+        // GAME LOGIC TO PLAY ROUNDS AND SAVE PLAYED LOCATIONS
         
-        window.display();
+        /*
+        For game logic check better how events work so I can make the game sort of wait for the mouse click before proceeding <- Priority!
+
+        Also print in window which player turn it is
+        */
+
+        for (int playedMoves = 0; playedMoves < 9; playedMoves++)
+        {
+            cout << "Player " << playedMoves % 2 + 1 << " turn to play. Select your Board coordinates." << endl;
+
+            if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+            {
+                sf::Vector2i localPosition = sf::Mouse::getPosition(window);
+                if (localPosition.x > 105 && localPosition.x < 295 && localPosition.y > 105 && localPosition.y < 295)
+                {
+                    if (playedMoves % 2 + 1 == 1)
+                    {
+                        board[0][0] = "X";
+                    }
+                    else
+                    {
+                        board[0][0] = "O";
+                    }
+                }
+            }
+
+            for (int row = 0; row < 3; row++)
+            {
+                for (int column = 0; column < 3; column++)
+                {
+                    if (board[row][column] == "O")
+                    {
+                        generateCircles(window);
+                    }
+                    else
+                    {
+                        generateCrosses(window);
+                    }
+
+                }
+            }
+                
+
+        }
+
+
+
+        
 
         if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
         {
             sf::Vector2i localPosition = sf::Mouse::getPosition(window);
 
-            if (localPosition.x > 110 && localPosition.x < 290 && localPosition.y > 110 && localPosition.y < 290)
+            if (localPosition.x > 105 && localPosition.x < 295 && localPosition.y > 105 && localPosition.y < 295)
             {
                 generateCircles(window);
             }
         }
+
+        window.display();
 
     }
 
