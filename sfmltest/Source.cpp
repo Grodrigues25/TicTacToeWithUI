@@ -1,12 +1,53 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <string>
 
 using namespace std;
 
 // TODO: Understand how the sf::Mouse::getPosition() coordinates work
 
-void generateMap(sf::RenderWindow& window)
+void generateCrosses(sf::RenderWindow& window, int x, int y)
 {
+    sf::RectangleShape line1(sf::Vector2f(150.f, 10.f));
+    line1.setRotation(45.f);
+    line1.setPosition(x-50, y-50);
+
+    sf::RectangleShape line2(sf::Vector2f(150.f, 10.f));
+    line2.setRotation(135.f);
+    // Adjust for the fact that the rotation happens in relation to a corner of the rectangle.
+    line2.setPosition(x + 50 + 10 * sqrt(2) / 2, y - 50 + 10 * sqrt(2) / 2);
+
+    line1.setFillColor(sf::Color::Black);
+    line2.setFillColor(sf::Color::Black);
+
+    window.draw(line1);
+    window.draw(line2);
+}
+
+void generateCircles(sf::RenderWindow& window, int x, int y)
+{
+    sf::CircleShape outerCircle(60);
+    outerCircle.setPosition(x-60, y-60);
+
+    sf::CircleShape innerCircle(50);
+    innerCircle.setPosition(x-50, y-50);
+
+    outerCircle.setFillColor(sf::Color::Black);
+    innerCircle.setFillColor(sf::Color::White);
+
+    window.draw(outerCircle);
+    window.draw(innerCircle);
+}
+
+void generateMap(sf::RenderWindow &window, string board[3][3])
+{
+
+    int boardSquaresCentroids[3][3][2] = {
+        {{200,200},{400,200},{600,200}},
+        {{200,400},{400,400},{600,400}},
+        {{200,600},{400,600},{600,600}},
+    };
+
     // Vertical Lines Definition
     sf::RectangleShape line1(sf::Vector2f(600.f, 10.f));
     line1.rotate(90.f);
@@ -32,90 +73,27 @@ void generateMap(sf::RenderWindow& window)
     window.draw(line2);
     window.draw(line3);
     window.draw(line4);
-}
 
-void generateCrosses(sf::RenderWindow &window)
-{
-    sf::RectangleShape line1(sf::Vector2f(150.f, 10.f));
-    line1.setRotation(45.f);
-    line1.setPosition(350, 350);
-
-    sf::RectangleShape line2(sf::Vector2f(150.f, 10.f));
-    line2.setRotation(135.f);
-    // Adjust for the fact that the rotation happens in relation to a corner of the rectangle.
-    line2.setPosition(450 + 10 * sqrt(2) / 2, 350 + 10*sqrt(2)/2);
-
-    line1.setFillColor(sf::Color::Black);
-    line2.setFillColor(sf::Color::Black);
-
-    window.draw(line1);
-    window.draw(line2);
-}
-
-void generateCircles(sf::RenderWindow& window)
-{
-    sf::CircleShape outerCircle(60);
-    outerCircle.setPosition(140, 140);
-
-    sf::CircleShape innerCircle(50);
-    innerCircle.setPosition(150, 150);
-
-    outerCircle.setFillColor(sf::Color::Black);
-    innerCircle.setFillColor(sf::Color::White);
-
-    window.draw(outerCircle);
-    window.draw(innerCircle);
-}
-
-int main()
-{
-    // SETTINGS
-    int windowSize = 800;
-
-    sf::ContextSettings settings;
-    settings.antialiasingLevel = 8;
-
-    //RENDER WINDOW
-    sf::RenderWindow window(sf::VideoMode(windowSize, windowSize), "TicTacToe", sf::Style::Default, settings);
-    sf::RectangleShape background(sf::Vector2f(windowSize, windowSize));
-    background.setFillColor(sf::Color::White);
-
-    //WHILE WINDOW IS OPEN LOGIC AKA WHILE THE GAME IS RUNNING
-    while (window.isOpen())
+    
+    //Draw Played Locations
+    for (int row = 0; row < 3; row++)
     {
-        sf::Event event;
-        while (window.pollEvent(event))
+        for (int column = 0; column < 3; column++)
         {
-            if (event.type == sf::Event::Closed)
-                window.close();
-        }
-
-        window.clear();
-        window.draw(background);
-
-        generateMap(window);
-        
-        generateCrosses(window);
-        
-        window.display();
-
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
-        {
-            sf::Vector2i localPosition = sf::Mouse::getPosition(window);
-
-            if (localPosition.x > 110 && localPosition.x < 290 && localPosition.y > 110 && localPosition.y < 290)
+            if (board[row][column] == "X") {
+                generateCrosses(window, boardSquaresCentroids[row][column][0], boardSquaresCentroids[row][column][1]);
+            }
+            if (board[row][column] == "O")
             {
-                generateCircles(window);
+                generateCircles(window, boardSquaresCentroids[row][column][0], boardSquaresCentroids[row][column][1]);
             }
         }
-
     }
-
-    return 0;
 }
 
-
-/*
+int* playedCoords(sf::Event event)
+{
+    /*
     1|2|3
     -|-|-
     4|5|6
@@ -134,3 +112,215 @@ Centers
 // 9 -> 600,600
 
 */
+
+    int* coords = new int[2];
+
+    //1
+    if (event.mouseButton.x > 105 && event.mouseButton.x < 295 && event.mouseButton.y > 105 && event.mouseButton.y < 295)
+    {
+        coords[0] = 0;
+        coords[1] = 0;
+        return coords;
+    }
+
+    //2
+    if (event.mouseButton.x > 305 && event.mouseButton.x < 495 && event.mouseButton.y > 105 && event.mouseButton.y < 295)
+    {
+        coords[0] = 0;
+        coords[1] = 1;
+        return coords;
+    }
+
+    //3
+    if (event.mouseButton.x > 505 && event.mouseButton.x < 695 && event.mouseButton.y > 105 && event.mouseButton.y < 295)
+    {
+        coords[0] = 0;
+        coords[1] = 2;
+        return coords;
+    }
+
+    //4
+    if (event.mouseButton.x > 105 && event.mouseButton.x < 295 && event.mouseButton.y > 305 && event.mouseButton.y < 495)
+    {
+        coords[0] = 1;
+        coords[1] = 0;
+        return coords;
+    }
+
+    // 5
+    if (event.mouseButton.x > 305 && event.mouseButton.x < 495 && event.mouseButton.y > 305 && event.mouseButton.y < 495)
+    {
+        coords[0] = 1;
+        coords[1] = 1;
+        return coords;
+    }
+
+    //6
+    if (event.mouseButton.x > 505 && event.mouseButton.x < 695 && event.mouseButton.y > 305 && event.mouseButton.y < 495)
+    {
+        coords[0] = 1;
+        coords[1] = 2;
+        return coords;
+    }
+
+    //7
+    if (event.mouseButton.x > 105 && event.mouseButton.x < 295 && event.mouseButton.y > 505 && event.mouseButton.y < 695)
+    {
+        coords[0] = 2;
+        coords[1] = 0;
+        return coords;
+    }
+
+    // 8
+    if (event.mouseButton.x > 305 && event.mouseButton.x < 495 && event.mouseButton.y > 505 && event.mouseButton.y < 695)
+    {
+        coords[0] = 2;
+        coords[1] = 1;
+        return coords;
+    }
+
+    //9
+    if (event.mouseButton.x > 505 && event.mouseButton.x < 695 && event.mouseButton.y > 505 && event.mouseButton.y < 695)
+    {
+        coords[0] = 2;
+        coords[1] = 2;
+        return coords;
+    }
+
+}
+
+int main()
+{
+    // SETTINGS
+    int windowSize = 800;
+
+    sf::ContextSettings settings;
+    settings.antialiasingLevel = 8;
+
+    //RENDER WINDOW
+    sf::RenderWindow window(sf::VideoMode(windowSize, windowSize), "TicTacToe", sf::Style::Default, settings);
+    sf::RectangleShape background(sf::Vector2f(windowSize, windowSize));
+    background.setFillColor(sf::Color::White);
+
+    //GAME DATA STRUCTURES
+    string board[3][3] = { {" "," "," "},{" "," "," "},{" "," "," "} };
+    int winStatus;
+    int turn = 0;
+    
+    
+
+    //WHILE WINDOW IS OPEN LOGIC AKA WHILE THE GAME IS RUNNING
+    while (window.isOpen())
+    {
+        sf::Event event;
+        while (window.pollEvent(event))
+        {
+
+            switch (event.type)
+            {
+            case sf::Event::Closed:
+                window.close();
+                break;
+
+            case sf::Event::MouseButtonPressed:
+
+                if (event.mouseButton.button == sf::Mouse::Left)
+                {
+                    int* playerCoordsPlayed = 0;
+                    playerCoordsPlayed = playedCoords(event);
+
+                    string symbol = "O";
+                    if (turn % 2 + 1 == 1)
+                    {
+                        symbol = "X";
+                    }
+
+                    board[playerCoordsPlayed[0]][playerCoordsPlayed[1]] = symbol;
+
+                    turn++;
+
+                    delete[] playerCoordsPlayed;
+                }
+            }
+        }
+
+        window.clear();
+        window.draw(background);
+
+        generateMap(window, board);
+
+        //if (board[0][0] == "O")
+        //{
+        //    generateCircles(window);
+        //}
+        
+        // GAME LOGIC TO PLAY ROUNDS AND SAVE PLAYED LOCATIONS
+        
+        /*
+        For game logic check better how events work so I can make the game sort of wait for the mouse click before proceeding <- Priority!
+
+        Also print in window which player turn it is
+        */
+
+        //for (int playedMoves = 0; playedMoves < 9; playedMoves++)
+        //{
+        //    cout << "Player " << playedMoves % 2 + 1 << " turn to play. Select your Board coordinates." << endl;
+
+        //    if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+        //    {
+        //        sf::Vector2i localPosition = sf::Mouse::getPosition(window);
+        //        if (localPosition.x > 105 && localPosition.x < 295 && localPosition.y > 105 && localPosition.y < 295)
+        //        {
+        //            if (playedMoves % 2 + 1 == 1)
+        //            {
+        //                board[0][0] = "X";
+        //            }
+        //            else
+        //            {
+        //                board[0][0] = "O";
+        //            }
+        //        }
+        //    }
+
+        //    for (int row = 0; row < 3; row++)
+        //    {
+        //        for (int column = 0; column < 3; column++)
+        //        {
+        //            if (board[row][column] == "O")
+        //            {
+        //                generateCircles(window);
+        //            }
+        //            else
+        //            {
+        //                generateCrosses(window);
+        //            }
+
+        //        }
+        //    }
+                
+
+        //}
+
+
+
+        
+
+        //if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+        //{
+        //    sf::Vector2i localPosition = sf::Mouse::getPosition(window);
+
+        //    if (localPosition.x > 105 && localPosition.x < 295 && localPosition.y > 105 && localPosition.y < 295)
+        //    {
+        //        generateCircles(window);
+        //    }
+        //}
+
+        window.display();
+        
+    }
+
+    
+    return 0;
+}
+
+
