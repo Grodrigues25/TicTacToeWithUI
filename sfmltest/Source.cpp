@@ -4,7 +4,16 @@
 
 using namespace std;
 
-// TODO: Understand how the sf::Mouse::getPosition() coordinates work
+// TODO: Check why game breaks when clicking on a position that is not a playable square
+// TODO: Include checks to see if the played location is valid
+// TODO: Include an header to display which player's turn it is to play
+// TODO: Include a title
+// TODO: Check what adaptations I need to do for the game to work in different window sizes
+// TODO: Include win condition checks
+// TODO: Block playability when a player wins
+// TODO: Draw a line on the winning line
+// TODO: Analyse implementing replayability features, such a playing a new game after one ends
+// TODO: Analyse implementing a Scoreboard
 
 void generateCrosses(sf::RenderWindow& window, int x, int y)
 {
@@ -207,8 +216,6 @@ int main()
     int winStatus;
     int turn = 0;
     
-    
-
     //WHILE WINDOW IS OPEN LOGIC AKA WHILE THE GAME IS RUNNING
     while (window.isOpen())
     {
@@ -249,77 +256,10 @@ int main()
 
         generateMap(window, board);
 
-        //if (board[0][0] == "O")
-        //{
-        //    generateCircles(window);
-        //}
-        
-        // GAME LOGIC TO PLAY ROUNDS AND SAVE PLAYED LOCATIONS
-        
-        /*
-        For game logic check better how events work so I can make the game sort of wait for the mouse click before proceeding <- Priority!
-
-        Also print in window which player turn it is
-        */
-
-        //for (int playedMoves = 0; playedMoves < 9; playedMoves++)
-        //{
-        //    cout << "Player " << playedMoves % 2 + 1 << " turn to play. Select your Board coordinates." << endl;
-
-        //    if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
-        //    {
-        //        sf::Vector2i localPosition = sf::Mouse::getPosition(window);
-        //        if (localPosition.x > 105 && localPosition.x < 295 && localPosition.y > 105 && localPosition.y < 295)
-        //        {
-        //            if (playedMoves % 2 + 1 == 1)
-        //            {
-        //                board[0][0] = "X";
-        //            }
-        //            else
-        //            {
-        //                board[0][0] = "O";
-        //            }
-        //        }
-        //    }
-
-        //    for (int row = 0; row < 3; row++)
-        //    {
-        //        for (int column = 0; column < 3; column++)
-        //        {
-        //            if (board[row][column] == "O")
-        //            {
-        //                generateCircles(window);
-        //            }
-        //            else
-        //            {
-        //                generateCrosses(window);
-        //            }
-
-        //        }
-        //    }
-                
-
-        //}
-
-
-
-        
-
-        //if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
-        //{
-        //    sf::Vector2i localPosition = sf::Mouse::getPosition(window);
-
-        //    if (localPosition.x > 105 && localPosition.x < 295 && localPosition.y > 105 && localPosition.y < 295)
-        //    {
-        //        generateCircles(window);
-        //    }
-        //}
-
         window.display();
         
     }
 
-    
     return 0;
 }
 
