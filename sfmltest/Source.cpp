@@ -4,16 +4,36 @@
 
 using namespace std;
 
-// TODO: Check why game breaks when clicking on a position that is not a playable square
-// TODO: Include checks to see if the played location is valid
-// TODO: Include an header to display which player's turn it is to play
-// TODO: Include a title
-// TODO: Check what adaptations I need to do for the game to work in different window sizes
+// TODO: Check why game breaks when clicking on a position that is not a playable square -> DONE AND FIXED
+// TODO: Include checks to see if the played location is valid -> DONE
+// TODO: Include an header to display which player's turn it is to play ->
+// TODO: Include a title -> DONE
+// TODO: Check what adaptations I need to do for the game to work in different window sizes -> IN PROGRESS -> https://www.sfml-dev.org/tutorials/2.2/graphics-view.php#showing-more-when-the-window-is-resized
 // TODO: Include win condition checks
 // TODO: Block playability when a player wins
 // TODO: Draw a line on the winning line
 // TODO: Analyse implementing replayability features, such a playing a new game after one ends
 // TODO: Analyse implementing a Scoreboard
+
+/*
+    1|2|3
+    -|-|-
+    4|5|6
+    -|-|-
+    7|8|9
+
+Squares Centroids
+// 1 -> 200,200
+// 2 -> 400,200
+// 3 -> 600,200
+// 4 -> 200,400
+// 5 -> 400,400
+// 6 -> 600,400
+// 7 -> 200,600
+// 8 -> 400,600
+// 9 -> 600,600
+
+*/
 
 void generateCrosses(sf::RenderWindow& window, int x, int y)
 {
@@ -84,7 +104,7 @@ void generateMap(sf::RenderWindow &window, string board[3][3])
     window.draw(line4);
 
     
-    //Draw Played Locations
+    //Draw Played Locations by walking through the array containing board information
     for (int row = 0; row < 3; row++)
     {
         for (int column = 0; column < 3; column++)
@@ -100,27 +120,27 @@ void generateMap(sf::RenderWindow &window, string board[3][3])
     }
 }
 
+void generateTitles(sf::RenderWindow& window) 
+{
+    
+    sf::Text text;
+    sf::Font font;
+
+    font.loadFromFile("C:\\Users\\gonca\\source\\repos\\sfmltest\\include\\fonts\\Coffee Fills.ttf");
+    text.setFont(font); 
+    text.setString("Tic Tac Toe");
+    text.setCharacterSize(48); // in pixels, not points!
+    text.setFillColor(sf::Color::Black);
+    text.setStyle(sf::Text::Bold | sf::Text::Underlined);
+    text.setPosition(275, 25);
+
+    // inside the main loop, between window.clear() and window.display()
+    window.draw(text);
+
+}
+
 int* playedCoords(sf::Event event)
 {
-    /*
-    1|2|3
-    -|-|-
-    4|5|6
-    -|-|-
-    7|8|9
-
-Centers
-// 1 -> 200,200
-// 2 -> 400,200
-// 3 -> 600,200
-// 4 -> 200,400
-// 5 -> 400,400
-// 6 -> 600,400
-// 7 -> 200,600
-// 8 -> 400,600
-// 9 -> 600,600
-
-*/
 
     int* coords = new int[2];
 
@@ -196,6 +216,10 @@ Centers
         return coords;
     }
 
+    // If player clicks on any place outside the valid squares
+    coords[0] = -1;
+    coords[1] = -1;
+    return coords;
 }
 
 int main()
@@ -232,27 +256,40 @@ int main()
             case sf::Event::MouseButtonPressed:
 
                 if (event.mouseButton.button == sf::Mouse::Left)
-                {
+                {                    
                     int* playerCoordsPlayed = 0;
+
                     playerCoordsPlayed = playedCoords(event);
 
-                    string symbol = "O";
-                    if (turn % 2 + 1 == 1)
+                    if (playerCoordsPlayed[0] != -1 && board[playerCoordsPlayed[0]][playerCoordsPlayed[1]] == " ")
                     {
-                        symbol = "X";
+                        string symbol = "O";
+                        if (turn % 2 + 1 == 1)
+                        {
+                            symbol = "X";
+                        }
+
+                        board[playerCoordsPlayed[0]][playerCoordsPlayed[1]] = symbol;
+
+                        turn++;
                     }
-
-                    board[playerCoordsPlayed[0]][playerCoordsPlayed[1]] = symbol;
-
-                    turn++;
 
                     delete[] playerCoordsPlayed;
                 }
+
+            //case sf::Event::Resized:
+            //    sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
+            //    window.setView(sf::View(visibleArea));
+
             }
+            
+
         }
 
         window.clear();
         window.draw(background);
+
+        generateTitles(window);
 
         generateMap(window, board);
 
