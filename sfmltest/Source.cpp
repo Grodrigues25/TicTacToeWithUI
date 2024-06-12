@@ -11,9 +11,9 @@ using namespace std;
 // TODO: Check what adaptations I need to do for the game to work in different window sizes -> POSTPONED -> https://www.sfml-dev.org/tutorials/2.2/graphics-view.php#showing-more-when-the-window-is-resized
 // TODO: Include win condition checks -> DONE
 // TODO: Block playability when a player wins -> DONE
-// TODO: Draw a line on the winning line -> IN PROGRESS
-// TODO: Check if diagonal line definitions in the win conditions and the drawWinnningLine functions match
-// TODO: Calculate length of diagonal lines so that they can go completely accross
+// TODO: Draw a line on the winning line -> DONE
+// TODO: Check if diagonal line definitions in the win conditions and the drawWinnningLine functions match -> DONE
+// TODO: Calculate length of diagonal lines so that they can go completely accross -> DONE
 // TODO: Cleanup Code
 // TODO: Analyse implementing replayability features, such a playing a new game after one ends
 // TODO: Analyse implementing a Scoreboard
@@ -125,67 +125,72 @@ void generateMap(sf::RenderWindow &window, string board[3][3])
 
 void generateWinningLine(sf::RenderWindow & window, int winLocation) 
 {
-    sf::RectangleShape winningLine(sf::Vector2f(600.f, 10.f));
+    float length;
+
+    if (winLocation >= 7)
+    {
+        length = sqrt(600*600+600*600);
+    }
+    else
+    {
+        length = 600.f;
+    }
+
+    sf::RectangleShape winningLine(sf::Vector2f(length, 10.f));
     winningLine.setFillColor(sf::Color::Green);
 
-    //top horizontal line
-    if (winLocation == 1)
-    {
-        winningLine.setPosition(100, 200);
-    }
+    switch (winLocation) {
+        case 1:
+            //top horizontal line
+            winningLine.setPosition(100, 200);
+            break;
 
-    //middle horizontal line
-    if (winLocation == 2)
-    {
-        winningLine.setPosition(100, 400);
-    }
+        case 2:
+            //middle horizontal line
+            winningLine.setPosition(100, 400);
+            break;
 
-    //bottom horizontal line
-    if (winLocation == 3)
-    {
-        winningLine.setPosition(100, 600);
-    }
+        case 3:
+            //bottom horizontal line
+            winningLine.setPosition(100, 600);
+            break;
+            
+        case 4:
+            //left vertical line
+            winningLine.setPosition(200, 100);
+            winningLine.rotate(90.f);
+            break;
 
-    //left vertical line
-    if (winLocation == 4)
-    {
-        winningLine.setPosition(200, 100);
-        winningLine.rotate(90.f);
-    }
+        case 5:
+            //middle vertical line
+            winningLine.setPosition(400, 100);
+            winningLine.rotate(90.f);
+            break;
 
-    //middle vertical line
-    if (winLocation == 5)
-    {
-        winningLine.setPosition(400, 100);
-        winningLine.rotate(90.f);
-    }
+        case 6:
+            //right vertical line
+            winningLine.setPosition(600, 100);
+            winningLine.rotate(90.f);
+            break;
 
-    //right vertical line
-    if (winLocation == 6)
-    {
-        winningLine.setPosition(600, 100);
-        winningLine.rotate(90.f);
-    }
+        case 7:
+            //diagonal top left to bottom right
+            winningLine.setPosition(100, 100);
+            winningLine.rotate(45.f);
+            break;
 
-    //diagonal top left to bottom right
-    if (winLocation == 7)
-    {
-        winningLine.setPosition(700, 100);
-        winningLine.rotate(135.f);
-    }
-
-    //diagonal top right to bottom left
-    if (winLocation == 8)
-    {
-        winningLine.setPosition(100, 100);
-        winningLine.rotate(135.f);
+        case 8:
+            //diagonal top right to bottom left
+            winningLine.setPosition(700, 100);
+            winningLine.rotate(135.f);
+            break;
     }
 
     window.draw(winningLine);
 
 }
 
-void generateTitles(sf::RenderWindow& window) 
+void generateTitle(sf::RenderWindow& window) 
 {
     
     sf::Text text;
@@ -401,7 +406,7 @@ int main()
         window.clear();
         window.draw(background);
 
-        generateTitles(window);
+        generateTitle(window);
 
         generateMap(window, board);
         
