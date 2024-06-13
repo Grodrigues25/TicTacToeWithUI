@@ -6,7 +6,7 @@ using namespace std;
 
 // TODO: Check why game breaks when clicking on a position that is not a playable square -> DONE AND FIXED
 // TODO: Include checks to see if the played location is valid -> DONE
-// TODO: Include an header to display which player's turn it is to play ->
+// TODO: Include an header to display which player's turn it is to play -> DONE
 // TODO: Include a title -> DONE
 // TODO: Check what adaptations I need to do for the game to work in different window sizes -> POSTPONED -> https://www.sfml-dev.org/tutorials/2.2/graphics-view.php#showing-more-when-the-window-is-resized
 // TODO: Include win condition checks -> DONE
@@ -14,9 +14,10 @@ using namespace std;
 // TODO: Draw a line on the winning line -> DONE
 // TODO: Check if diagonal line definitions in the win conditions and the drawWinnningLine functions match -> DONE
 // TODO: Calculate length of diagonal lines so that they can go completely accross -> DONE
-// TODO: Cleanup Code
+// TODO: Cleanup Code -> IN PROGRESS
 // TODO: Analyse implementing replayability features, such a playing a new game after one ends
 // TODO: Analyse implementing a Scoreboard
+// TODO: Add a draw scenario -> IN PROGRESS
 
 /*
     1|2|3
@@ -123,7 +124,7 @@ void generateMap(sf::RenderWindow &window, string board[3][3])
     }
 }
 
-void generateWinningLine(sf::RenderWindow & window, int winLocation) 
+void generateWinningLine(sf::RenderWindow &window, int winLocation) 
 {
     float length;
 
@@ -190,22 +191,34 @@ void generateWinningLine(sf::RenderWindow & window, int winLocation)
 
 }
 
-void generateTitle(sf::RenderWindow& window) 
+void generateTitle(sf::RenderWindow& window, int turn) 
 {
     
-    sf::Text text;
+    sf::Text title;
+    sf::Text playerToPlay;
     sf::Font font;
 
+    // "TIC TAC TOE" Title
     font.loadFromFile("C:\\Users\\gonca\\source\\repos\\sfmltest\\include\\fonts\\Coffee Fills.ttf");
-    text.setFont(font); 
-    text.setString("Tic Tac Toe");
-    text.setCharacterSize(48); // in pixels, not points!
-    text.setFillColor(sf::Color::Black);
-    text.setStyle(sf::Text::Bold | sf::Text::Underlined);
-    text.setPosition(275, 25);
+    title.setFont(font); 
+    title.setString("Tic Tac Toe");
+    title.setCharacterSize(48); // in pixels, not points!
+    title.setFillColor(sf::Color::Black);
+    title.setStyle(sf::Text::Bold | sf::Text::Underlined);
+    title.setPosition(275, 25);
 
+    // Player turn text and winning player text
+    playerToPlay.setFont(font);
+    playerToPlay.setCharacterSize(48); // in pixels, not points!
+    playerToPlay.setFillColor(sf::Color::Black);
+    playerToPlay.setStyle(sf::Text::Bold | sf::Text::Underlined);
+    playerToPlay.setPosition(260, 800);
+
+    turn % 2 == 0 ? playerToPlay.setString("Crosses Turn!") : playerToPlay.setString("Circles Turn!");
+    
     // inside the main loop, between window.clear() and window.display()
-    window.draw(text);
+    window.draw(title);
+    window.draw(playerToPlay);
 
 }
 
@@ -339,6 +352,8 @@ int winConditions(string board[3][3])
         if (board[2][0] == "X") { return 81; }
         else { return 82; }
     }
+
+    return 99;
 }
 
 int main()
@@ -350,8 +365,8 @@ int main()
     settings.antialiasingLevel = 8;
 
     //RENDER WINDOW
-    sf::RenderWindow window(sf::VideoMode(windowSize, windowSize), "TicTacToe", sf::Style::Close, settings);
-    sf::RectangleShape background(sf::Vector2f(800, 800));
+    sf::RenderWindow window(sf::VideoMode(windowSize, 1000), "TicTacToe", sf::Style::Close, settings);
+    sf::RectangleShape background(sf::Vector2f(windowSize, 1000));
     background.setFillColor(sf::Color::White);
 
     //GAME DATA STRUCTURES
@@ -364,76 +379,68 @@ int main()
     while (window.isOpen())
     {
         sf::Event event;
+
         while (window.pollEvent(event))
         {
-
             switch (event.type)
             {
-            case sf::Event::Closed:
-                window.close();
-                break;
+                case sf::Event::Closed:
+                    window.close();
+                    break;
 
-            case sf::Event::MouseButtonPressed:
+                case sf::Event::MouseButtonPressed:
 
-                if (event.mouseButton.button == sf::Mouse::Left)
-                {                    
-                    int* playerCoordsPlayed = 0;
+                    if (event.mouseButton.button == sf::Mouse::Left)
+                    {                    
+                        int* playerCoordsPlayed = 0;
+                        playerCoordsPlayed = playedCoords(event);
 
-                    playerCoordsPlayed = playedCoords(event);
-
-                    if (playerCoordsPlayed[0] != -1 && board[playerCoordsPlayed[0]][playerCoordsPlayed[1]] == " ")
-                    {
-                        string symbol = "O";
-                        if (turn % 2 + 1 == 1)
+                        if (playerCoordsPlayed[0] != -1 && board[playerCoordsPlayed[0]][playerCoordsPlayed[1]] == " ")
                         {
-                            symbol = "X";
+                            // Ternary operator "Boolean operation" ? result if true : result if false;
+                            string symbol = turn % 2 + 1 == 1 ? "X" : "O";
+                            board[playerCoordsPlayed[0]][playerCoordsPlayed[1]] = symbol;
+                            turn++;
                         }
 
-                        board[playerCoordsPlayed[0]][playerCoordsPlayed[1]] = symbol;
-
-                        turn++;
+                        delete[] playerCoordsPlayed;
                     }
-
-                    delete[] playerCoordsPlayed;
-                }
-                break;
-
+                    break;
             }
-            
 
         }
 
         window.clear();
         window.draw(background);
 
-        generateTitle(window);
-
+        generateTitle(window, turn);
         generateMap(window, board);
-        
-        int winCode = winConditions(board);
-        int divisor = 10;
-        int winLine = (int)winCode / divisor;
-        int winningPlayer = winCode % divisor;
 
-        if (winLine != 0)
+        int winCode = winConditions(board);
+
+        if (winCode != 0)
         {
+            int divisor = 10;
+            int winLine = (int)winCode / divisor;
+            int winningPlayer = winCode % divisor;
             generateWinningLine(window, winLine);
+            window.display();
+
+            if (winningPlayer == 1)
+            {
+                cout << "Player 1 Wins!! " << endl;
+                //score[0]++;
+                break;
+            }
+            else if (winningPlayer == 2)
+            {
+                cout << "Player 2 Wins!! " << endl;
+                //score[1]++;
+                break;
+            }
         }
 
         window.display();
-
-        if (winningPlayer == 1)
-        {
-            cout << "Player 1 Wins!! " << endl;
-            //score[0]++;
-            break;
-        }
-        else if (winningPlayer == 2)
-        {
-            cout << "Player 2 Wins!! " << endl;
-            //score[1]++;
-            break;
-        }
         
     }
 
