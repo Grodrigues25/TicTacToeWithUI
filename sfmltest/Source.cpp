@@ -15,9 +15,11 @@ using namespace std;
 // TODO: Check if diagonal line definitions in the win conditions and the drawWinnningLine functions match -> DONE
 // TODO: Calculate length of diagonal lines so that they can go completely accross -> DONE
 // TODO: Cleanup Code -> IN PROGRESS
+// TODO: Find a way for a player to win and then the board gets blocked, and the window does not close
+// TODO: Make a pop up square asking the player if they want to play again
 // TODO: Analyse implementing replayability features, such a playing a new game after one ends
 // TODO: Analyse implementing a Scoreboard
-// TODO: Add a draw scenario -> IN PROGRESS
+// TODO: Add a draw scenario -> DONE
 
 /*
     1|2|3
@@ -352,8 +354,6 @@ int winConditions(string board[3][3])
         if (board[2][0] == "X") { return 81; }
         else { return 82; }
     }
-
-    return 99;
 }
 
 int main()
@@ -418,7 +418,7 @@ int main()
 
         int winCode = winConditions(board);
 
-        if (winCode != 0)
+        if (winCode > 0)
         {
             int divisor = 10;
             int winLine = (int)winCode / divisor;
@@ -438,6 +438,12 @@ int main()
                 //score[1]++;
                 break;
             }
+        }
+        
+        if (turn == 9)
+        {
+            cout << "It's a Draw!" << endl;
+            break;
         }
 
         window.display();
