@@ -310,49 +310,34 @@ int* playedCoords(int clickCoords[2])
 int winConditions(string board[3][3])
 {
     // ROWS
-    if (board[0][0] == board[0][1] && board[0][0] == board[0][2] && board[0][0] != " " && board[0][1] != " " && board[0][2] != " ")
-    {
-        if (board[0][0] == "X") { return 11; }
-        else { return 12; }
+    if (board[0][0] == board[0][1] && board[0][0] == board[0][2] && board[0][0] != " " && board[0][1] != " " && board[0][2] != " "){
+        return board[0][0] == "X" ? 11 : 12;
     }
-    if (board[1][0] == board[1][1] && board[1][0] == board[1][2] && board[1][0] != " " && board[1][1] != " " && board[1][2] != " ")
-    {
-        if (board[1][0] == "X") { return 21; }
-        else { return 22; }
+    if (board[1][0] == board[1][1] && board[1][0] == board[1][2] && board[1][0] != " " && board[1][1] != " " && board[1][2] != " "){
+        return board[1][0] == "X" ? 21 : 22;
     }
-    if (board[2][0] == board[2][1] && board[2][0] == board[2][2] && board[2][0] != " " && board[2][1] != " " && board[2][2] != " ")
-    {
-        if (board[2][0] == "X") { return 31; }
-        else { return 32; }
+    if (board[2][0] == board[2][1] && board[2][0] == board[2][2] && board[2][0] != " " && board[2][1] != " " && board[2][2] != " "){
+        return board[2][0] == "X" ? 31 : 32;
     }
 
     // COLUMNS
-    if (board[0][0] == board[1][0] && board[0][0] == board[2][0] && board[0][0] != " " && board[1][0] != " " && board[2][0] != " ")
-    {
-        if (board[0][0] == "X") { return 41; }
-        else { return 42; }
+    if (board[0][0] == board[1][0] && board[0][0] == board[2][0] && board[0][0] != " " && board[1][0] != " " && board[2][0] != " "){
+        return board[0][0] == "X" ? 41 : 42;
     }
-    if (board[0][1] == board[1][1] && board[0][1] == board[2][1] && board[0][1] != " " && board[1][1] != " " && board[2][1] != " ")
-    {
-        if (board[0][1] == "X") { return 51; }
-        else { return 52; }
+    if (board[0][1] == board[1][1] && board[0][1] == board[2][1] && board[0][1] != " " && board[1][1] != " " && board[2][1] != " "){
+        return board[0][1] == "X" ? 51 : 51;
     }
-    if (board[0][2] == board[1][2] && board[0][2] == board[2][2] && board[0][2] != " " && board[1][2] != " " && board[2][2] != " ")
-    {
-        if (board[0][2] == "X") { return 61; }
-        else { return 62; }
+    if (board[0][2] == board[1][2] && board[0][2] == board[2][2] && board[0][2] != " " && board[1][2] != " " && board[2][2] != " "){
+        return board[0][2] == "X" ? 61 : 62;
     }
 
     //DIAGONALS
-    if (board[0][0] == board[1][1] && board[0][0] == board[2][2] && board[0][0] != " " && board[1][1] != " " && board[2][2] != " ")
-    {
-        if (board[0][0] == "X") { return 71; }
-        else { return 72; }
+    if (board[0][0] == board[1][1] && board[0][0] == board[2][2] && board[0][0] != " " && board[1][1] != " " && board[2][2] != " "){
+        return board[0][0] == "X" ? 71 : 72;
+
     }
-    if (board[2][0] == board[1][1] && board[2][0] == board[0][2] && board[2][0] != " " && board[1][1] != " " && board[0][2] != " ")
-    {
-        if (board[2][0] == "X") { return 81; }
-        else { return 82; }
+    if (board[2][0] == board[1][1] && board[2][0] == board[0][2] && board[2][0] != " " && board[1][1] != " " && board[0][2] != " "){
+        return board[2][0] == "X" ? 81 : 82;
     }
 
     return 0;
@@ -360,8 +345,7 @@ int winConditions(string board[3][3])
 
 int roundEnded(sf::RenderWindow& window, int winCode, int turn)
 {
-    if (turn == 9)
-    {
+    if (turn == 9){
         cout << "It's a Draw!" << endl;
         return -1;
     }
@@ -370,15 +354,12 @@ int roundEnded(sf::RenderWindow& window, int winCode, int turn)
     int winLine = (int)winCode / divisor;
     int winningPlayer = winCode % divisor;
     generateWinningLine(window, winLine);
-    window.display();
 
-    if (winningPlayer == 1)
-    {
+    if (winningPlayer == 1){
         cout << "Player 1 Wins!! " << endl;
         return 0;
     }
-    else if (winningPlayer == 2)
-    {
+    else if (winningPlayer == 2){
         cout << "Player 2 Wins!! " << endl;
         return 1;
     }
@@ -388,27 +369,53 @@ void generatePlayAgainBox(sf::RenderWindow& window)
 {
 
     sf::Text playAgainQuestion;
+    sf::Text Yes;
+    sf::Text No;
     sf::Font font;
-
-    sf::RectangleShape BoxOutline(sf::Vector2f(400, 300));
-    BoxOutline.setPosition(250, 250);
-    BoxOutline.setFillColor(sf::Color::Black);
-
-    sf::RectangleShape BoxContents(sf::Vector2f(390, 290));
-    BoxContents.setPosition(255, 255);
-    BoxContents.setFillColor(sf::Color::White);
-
     font.loadFromFile("C:\\Users\\gonca\\source\\repos\\sfmltest\\include\\fonts\\Coffee Fills.ttf");
+
+    sf::RectangleShape boxOutline(sf::Vector2f(500, 300));
+    boxOutline.setPosition(150, 250);
+    boxOutline.setFillColor(sf::Color::Black);
+
+    sf::RectangleShape boxContents(sf::Vector2f(490, 290));
+    boxContents.setPosition(155, 255);
+    boxContents.setFillColor(sf::Color::White);
+
+    sf::RectangleShape yesBoxOutline(sf::Vector2f(70, 50));
+    yesBoxOutline.setPosition(300, 455);
+    yesBoxOutline.setFillColor(sf::Color::Black);
+
+    sf::RectangleShape yesBoxContents(sf::Vector2f(66, 46));
+    yesBoxContents.setPosition(302, 457);
+    yesBoxContents.setFillColor(sf::Color::White);
+
     playAgainQuestion.setFont(font);
     playAgainQuestion.setString("Would like to play again?");
     playAgainQuestion.setCharacterSize(30); // in pixels, not points!
     playAgainQuestion.setFillColor(sf::Color::Black);
     playAgainQuestion.setStyle(sf::Text::Bold | sf::Text::Underlined);
-    playAgainQuestion.setPosition(275, 275);
+    playAgainQuestion.setPosition(225, 275);
 
-    window.draw(BoxOutline);
-    window.draw(BoxContents);
+    Yes.setString("Yes");
+    Yes.setCharacterSize(30); // in pixels, not points!
+    Yes.setFillColor(sf::Color::Black);
+    Yes.setStyle(sf::Text::Bold | sf::Text::Underlined);
+    Yes.setPosition(336, 470);
+
+    No.setString("No");
+    No.setCharacterSize(30); // in pixels, not points!
+    No.setFillColor(sf::Color::Black);
+    No.setStyle(sf::Text::Bold | sf::Text::Underlined);
+    No.setPosition(436, 470);
+
+    window.draw(boxOutline);
+    window.draw(boxContents);
     window.draw(playAgainQuestion);
+    window.draw(yesBoxOutline);
+    window.draw(yesBoxContents);
+    window.draw(Yes);
+    window.draw(No);
 }
 
 int main()
@@ -423,6 +430,7 @@ int main()
     sf::RenderWindow window(sf::VideoMode(windowSize, 1000), "TicTacToe", sf::Style::Close, settings);
     sf::RectangleShape background(sf::Vector2f(windowSize, 1000));
     background.setFillColor(sf::Color::White);
+    window.setVerticalSyncEnabled(true);
 
     //GAME DATA STRUCTURES
     string board[3][3] = { {" "," "," "},{" "," "," "},{" "," "," "} };
@@ -434,22 +442,18 @@ int main()
     bool gameRunning = true;
     
     //WHILE WINDOW IS OPEN LOGIC AKA WHILE THE GAME IS RUNNING
-    while (window.isOpen() && gameRunning)
-    {
+    while (window.isOpen() && gameRunning){
         sf::Event event;
 
-        while (window.pollEvent(event))
-        {
-            switch (event.type)
-            {
+        while (window.pollEvent(event)){
+            switch (event.type){
                 case sf::Event::Closed:
                     window.close();
                     break;
 
                 case sf::Event::MouseButtonPressed:
 
-                    if (event.mouseButton.button == sf::Mouse::Left)
-                    {                    
+                    if (event.mouseButton.button == sf::Mouse::Left){                    
                         leftMouseClickCoords[0] = event.mouseButton.x;
                         leftMouseClickCoords[1] = event.mouseButton.y;                        
                     }
@@ -465,13 +469,11 @@ int main()
         generateMap(window, board);
 
         // WinCode == 0 means no player has still won the game
-        if (winCode == 0)
-        {
+        if (winCode == 0){
             int* playerCoordsPlayed = 0;
             playerCoordsPlayed = playedCoords(leftMouseClickCoords);
 
-            if (playerCoordsPlayed[0] != -1 && board[playerCoordsPlayed[0]][playerCoordsPlayed[1]] == " ")
-            {
+            if (playerCoordsPlayed[0] != -1 && board[playerCoordsPlayed[0]][playerCoordsPlayed[1]] == " "){
                 // Ternary operator "Boolean operation" ? result if true : result if false;
                 string symbol = turn % 2 + 1 == 1 ? "X" : "O";
                 board[playerCoordsPlayed[0]][playerCoordsPlayed[1]] = symbol;
@@ -484,12 +486,11 @@ int main()
 
         // Check if a player has won after the last play
         winCode = winConditions(board);
-        if (winCode > 0)
-        {
+
+        if (winCode > 0){
             int winningPlayer = roundEnded(window, winCode, turn);
             // -1 means draw
-            if (winningPlayer != -1)
-            {
+            if (winningPlayer != -1){
                 score[winningPlayer]++;
             }
 
@@ -502,5 +503,3 @@ int main()
 
     return 0;
 }
-
-
