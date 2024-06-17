@@ -16,10 +16,11 @@ using namespace std;
 // TODO: Calculate length of diagonal lines so that they can go completely accross -> DONE
 // TODO: Cleanup Code -> IN PROGRESS
 // TODO: Find a way for a player to win and then the board gets blocked, and the window does not close -> DONE
-// TODO: Make a pop up square asking the player if they want to play again
-// TODO: Analyse implementing replayability features, such a playing a new game after one ends
+// TODO: Make a pop up square asking the player if they want to play again -> DONE
+// TODO: Analyse implementing replayability features, such a playing a new game after one ends -> DONE
 // TODO: Analyse implementing a Scoreboard
 // TODO: Add a draw scenario -> DONE
+// TODO: change array of the board to be of type char
 
 /*
     1|2|3
@@ -201,7 +202,7 @@ void generateTitle(sf::RenderWindow& window, int turn){
     playerToPlay.setCharacterSize(48); // in pixels, not points!
     playerToPlay.setFillColor(sf::Color::Black);
     playerToPlay.setStyle(sf::Text::Bold | sf::Text::Underlined);
-    playerToPlay.setPosition(260, 800);
+    playerToPlay.setPosition(260, 725);
 
     turn % 2 == 0 ? playerToPlay.setString("Crosses Turn!") : playerToPlay.setString("Circles Turn!");
     
@@ -424,8 +425,8 @@ int main(){
     settings.antialiasingLevel = 8;
 
     //RENDER WINDOW
-    sf::RenderWindow window(sf::VideoMode(windowSize, 1000), "TicTacToe", sf::Style::Close, settings);
-    sf::RectangleShape background(sf::Vector2f(windowSize, 1000));
+    sf::RenderWindow window(sf::VideoMode(windowSize, 850), "TicTacToe", sf::Style::Close, settings);
+    sf::RectangleShape background(sf::Vector2f(windowSize, 850));
     background.setFillColor(sf::Color::White);
     window.setVerticalSyncEnabled(true);
 
@@ -486,12 +487,35 @@ int main(){
 
         if (winCode > 0){
             int winningPlayer = roundEnded(window, winCode, turn);
-            // -1 means draw
-            if (winningPlayer != -1){
-                score[winningPlayer]++;
-            }
-
+            
             generatePlayAgainBox(window);
+
+            // YES Box clicked
+            if (leftMouseClickCoords[0] > 300 && leftMouseClickCoords[0] < 370 && leftMouseClickCoords[1]>375 && leftMouseClickCoords[1] < 425) {
+                winCode = 0;
+                turn = 0;
+
+                // To avoid when clicking Yes causing the middle square to be pressed and filling it with a cross
+                leftMouseClickCoords[0] = 0;
+                leftMouseClickCoords[1] = 0;
+
+                // reset board array
+                for (int row = 0; row < 3; row++) {
+                    for (int column = 0; column < 3; column++) {
+                        board[row][column] = " ";
+                    }
+                }
+
+                // -1 means draw
+                if (winningPlayer != -1) {
+                    score[winningPlayer]++;
+                }
+            }
+            
+            // NO box clicked
+            if (leftMouseClickCoords[0] > 425 && leftMouseClickCoords[0] < 495 && leftMouseClickCoords[1]>375 && leftMouseClickCoords[1] < 425) {
+                gameRunning = false;
+            }
         }        
 
         window.display();
