@@ -41,8 +41,8 @@ Squares Centroids
 
 */
 
-void generateCrosses(sf::RenderWindow& window, int x, int y)
-{
+void generateCrosses(sf::RenderWindow& window, int x, int y){
+    
     sf::RectangleShape line1(sf::Vector2f(150.f, 10.f));
     line1.setRotation(45.f);
     line1.setPosition(x-50, y-50);
@@ -59,8 +59,8 @@ void generateCrosses(sf::RenderWindow& window, int x, int y)
     window.draw(line2);
 }
 
-void generateCircles(sf::RenderWindow& window, int x, int y)
-{
+void generateCircles(sf::RenderWindow& window, int x, int y){
+    
     sf::CircleShape outerCircle(60);
     outerCircle.setPosition(x-60, y-60);
 
@@ -74,8 +74,7 @@ void generateCircles(sf::RenderWindow& window, int x, int y)
     window.draw(innerCircle);
 }
 
-void generateMap(sf::RenderWindow &window, string board[3][3])
-{
+void generateMap(sf::RenderWindow &window, string board[3][3]){
 
     int boardSquaresCentroids[3][3][2] = {
         {{200,200},{400,200},{600,200}},
@@ -108,36 +107,25 @@ void generateMap(sf::RenderWindow &window, string board[3][3])
     window.draw(line2);
     window.draw(line3);
     window.draw(line4);
-
     
     //Draw Played Locations by walking through the array containing board information
-    for (int row = 0; row < 3; row++)
-    {
-        for (int column = 0; column < 3; column++)
-        {
-            if (board[row][column] == "X") {
+    for (int row = 0; row < 3; row++){
+        for (int column = 0; column < 3; column++){
+            if (board[row][column] == "X"){
                 generateCrosses(window, boardSquaresCentroids[row][column][0], boardSquaresCentroids[row][column][1]);
             }
-            if (board[row][column] == "O")
-            {
+            if (board[row][column] == "O"){
                 generateCircles(window, boardSquaresCentroids[row][column][0], boardSquaresCentroids[row][column][1]);
             }
         }
     }
 }
 
-void generateWinningLine(sf::RenderWindow &window, int winLocation) 
-{
+void generateWinningLine(sf::RenderWindow &window, int winLocation){
+    
     float length;
 
-    if (winLocation >= 7)
-    {
-        length = sqrt(600*600+600*600);
-    }
-    else
-    {
-        length = 600.f;
-    }
+    winLocation >= 7 ? length = sqrt(600 * 600 + 600 * 600) : length = 600.f;
 
     sf::RectangleShape winningLine(sf::Vector2f(length, 10.f));
     winningLine.setFillColor(sf::Color::Green);
@@ -193,8 +181,7 @@ void generateWinningLine(sf::RenderWindow &window, int winLocation)
 
 }
 
-void generateTitle(sf::RenderWindow& window, int turn) 
-{
+void generateTitle(sf::RenderWindow& window, int turn){
     
     sf::Text title;
     sf::Text playerToPlay;
@@ -224,8 +211,7 @@ void generateTitle(sf::RenderWindow& window, int turn)
 
 }
 
-int* playedCoords(int clickCoords[2])
-{
+int* playedCoords(int clickCoords[2]){
 
     int* coords = new int[2];
 
@@ -307,8 +293,8 @@ int* playedCoords(int clickCoords[2])
     return coords;
 }
 
-int winConditions(string board[3][3])
-{
+int winConditions(string board[3][3]){
+
     // ROWS
     if (board[0][0] == board[0][1] && board[0][0] == board[0][2] && board[0][0] != " " && board[0][1] != " " && board[0][2] != " "){
         return board[0][0] == "X" ? 11 : 12;
@@ -343,8 +329,8 @@ int winConditions(string board[3][3])
     return 0;
 }
 
-int roundEnded(sf::RenderWindow& window, int winCode, int turn)
-{
+int roundEnded(sf::RenderWindow& window, int winCode, int turn){
+    
     if (turn == 9){
         cout << "It's a Draw!" << endl;
         return -1;
@@ -365,8 +351,7 @@ int roundEnded(sf::RenderWindow& window, int winCode, int turn)
     }
 }
 
-void generatePlayAgainBox(sf::RenderWindow& window)
-{
+void generatePlayAgainBox(sf::RenderWindow& window){
 
     sf::Text playAgainQuestion;
     sf::Text Yes;
@@ -374,40 +359,50 @@ void generatePlayAgainBox(sf::RenderWindow& window)
     sf::Font font;
     font.loadFromFile("C:\\Users\\gonca\\source\\repos\\sfmltest\\include\\fonts\\Coffee Fills.ttf");
 
-    sf::RectangleShape boxOutline(sf::Vector2f(500, 300));
+    sf::RectangleShape boxOutline(sf::Vector2f(500, 240));
     boxOutline.setPosition(150, 250);
     boxOutline.setFillColor(sf::Color::Black);
 
-    sf::RectangleShape boxContents(sf::Vector2f(490, 290));
+    sf::RectangleShape boxContents(sf::Vector2f(490, 230));
     boxContents.setPosition(155, 255);
     boxContents.setFillColor(sf::Color::White);
 
     sf::RectangleShape yesBoxOutline(sf::Vector2f(70, 50));
-    yesBoxOutline.setPosition(300, 455);
+    yesBoxOutline.setPosition(300, 375);
     yesBoxOutline.setFillColor(sf::Color::Black);
 
     sf::RectangleShape yesBoxContents(sf::Vector2f(66, 46));
-    yesBoxContents.setPosition(302, 457);
+    yesBoxContents.setPosition(302, 377);
     yesBoxContents.setFillColor(sf::Color::White);
+
+    sf::RectangleShape noBoxOutline(sf::Vector2f(70, 50));
+    noBoxOutline.setPosition(425, 375);
+    noBoxOutline.setFillColor(sf::Color::Black);
+
+    sf::RectangleShape noBoxContents(sf::Vector2f(66, 46));
+    noBoxContents.setPosition(427, 377);
+    noBoxContents.setFillColor(sf::Color::White);
 
     playAgainQuestion.setFont(font);
     playAgainQuestion.setString("Would like to play again?");
     playAgainQuestion.setCharacterSize(30); // in pixels, not points!
     playAgainQuestion.setFillColor(sf::Color::Black);
     playAgainQuestion.setStyle(sf::Text::Bold | sf::Text::Underlined);
-    playAgainQuestion.setPosition(225, 275);
+    playAgainQuestion.setPosition(210, 300);
 
+    Yes.setFont(font);
     Yes.setString("Yes");
     Yes.setCharacterSize(30); // in pixels, not points!
     Yes.setFillColor(sf::Color::Black);
     Yes.setStyle(sf::Text::Bold | sf::Text::Underlined);
-    Yes.setPosition(336, 470);
-
+    Yes.setPosition(312, 380);
+    
+    No.setFont(font);
     No.setString("No");
     No.setCharacterSize(30); // in pixels, not points!
     No.setFillColor(sf::Color::Black);
     No.setStyle(sf::Text::Bold | sf::Text::Underlined);
-    No.setPosition(436, 470);
+    No.setPosition(442, 380);
 
     window.draw(boxOutline);
     window.draw(boxContents);
@@ -415,11 +410,13 @@ void generatePlayAgainBox(sf::RenderWindow& window)
     window.draw(yesBoxOutline);
     window.draw(yesBoxContents);
     window.draw(Yes);
+    window.draw(noBoxOutline);
+    window.draw(noBoxContents);
     window.draw(No);
 }
 
-int main()
-{
+int main(){
+
     // SETTINGS
     int windowSize = 800;
 
