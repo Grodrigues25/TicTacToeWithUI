@@ -18,9 +18,9 @@ using namespace std;
 // TODO: Find a way for a player to win and then the board gets blocked, and the window does not close -> DONE
 // TODO: Make a pop up square asking the player if they want to play again -> DONE
 // TODO: Analyse implementing replayability features, such a playing a new game after one ends -> DONE
-// TODO: Analyse implementing a Scoreboard
+// TODO: Analyse implementing a Scoreboard -> DONE
 // TODO: Add a draw scenario -> DONE
-// TODO: change array of the board to be of type char
+// TODO: change array of the board to be of type char for better memory utilization
 
 /*
     1|2|3
@@ -42,16 +42,16 @@ Squares Centroids
 
 */
 
-void generateCrosses(sf::RenderWindow& window, int x, int y){
+void generateCrosses(sf::RenderWindow& window, int x, int y, int length){
     
-    sf::RectangleShape line1(sf::Vector2f(150.f, 10.f));
+    sf::RectangleShape line1(sf::Vector2f(length, 10.f));
     line1.setRotation(45.f);
-    line1.setPosition(x-50, y-50);
+    line1.setPosition(x-(length* sqrt(2)/4), y- (length * sqrt(2)/4));
 
-    sf::RectangleShape line2(sf::Vector2f(150.f, 10.f));
+    sf::RectangleShape line2(sf::Vector2f(length, 10.f));
     line2.setRotation(135.f);
     // Adjust for the fact that the rotation happens in relation to a corner of the rectangle.
-    line2.setPosition(x + 50 + 10 * sqrt(2) / 2, y - 50 + 10 * sqrt(2) / 2);
+    line2.setPosition(x + (length * sqrt(2)/4), y - (length * sqrt(2) / 4) + 10 * sqrt(2) / 2);
 
     line1.setFillColor(sf::Color::Black);
     line2.setFillColor(sf::Color::Black);
@@ -60,13 +60,13 @@ void generateCrosses(sf::RenderWindow& window, int x, int y){
     window.draw(line2);
 }
 
-void generateCircles(sf::RenderWindow& window, int x, int y){
+void generateCircles(sf::RenderWindow& window, int x, int y, int radius){
     
-    sf::CircleShape outerCircle(60);
-    outerCircle.setPosition(x-60, y-60);
+    sf::CircleShape outerCircle(radius);
+    outerCircle.setPosition(x-radius, y-radius);
 
-    sf::CircleShape innerCircle(50);
-    innerCircle.setPosition(x-50, y-50);
+    sf::CircleShape innerCircle(radius-10);
+    innerCircle.setPosition(x-radius+10, y-radius+10);
 
     outerCircle.setFillColor(sf::Color::Black);
     innerCircle.setFillColor(sf::Color::White);
@@ -113,10 +113,10 @@ void generateMap(sf::RenderWindow &window, string board[3][3]){
     for (int row = 0; row < 3; row++){
         for (int column = 0; column < 3; column++){
             if (board[row][column] == "X"){
-                generateCrosses(window, boardSquaresCentroids[row][column][0], boardSquaresCentroids[row][column][1]);
+                generateCrosses(window, boardSquaresCentroids[row][column][0], boardSquaresCentroids[row][column][1], 150);
             }
             if (board[row][column] == "O"){
-                generateCircles(window, boardSquaresCentroids[row][column][0], boardSquaresCentroids[row][column][1]);
+                generateCircles(window, boardSquaresCentroids[row][column][0], boardSquaresCentroids[row][column][1], 60);
             }
         }
     }
@@ -202,7 +202,7 @@ void generateTitle(sf::RenderWindow& window, int turn){
     playerToPlay.setCharacterSize(48); // in pixels, not points!
     playerToPlay.setFillColor(sf::Color::Black);
     playerToPlay.setStyle(sf::Text::Bold | sf::Text::Underlined);
-    playerToPlay.setPosition(260, 725);
+    playerToPlay.setPosition(250, 725);
 
     turn % 2 == 0 ? playerToPlay.setString("Crosses Turn!") : playerToPlay.setString("Circles Turn!");
     
@@ -416,17 +416,58 @@ void generatePlayAgainBox(sf::RenderWindow& window){
     window.draw(No);
 }
 
+void generateScore(sf::RenderWindow& window, int score[2]) {
+
+    sf::Font font;
+    font.loadFromFile("C:\\Users\\gonca\\source\\repos\\sfmltest\\include\\fonts\\Coffee Fills.ttf");
+
+    sf::Text circlesScore;
+    sf::Text hyphen;
+    sf::Text crossesScore;
+
+    generateCrosses(window, 325, 850, 60);
+
+    crossesScore.setFont(font);
+    crossesScore.setString(std::to_string(score[0]));
+    crossesScore.setCharacterSize(40); // in pixels, not points!
+    crossesScore.setFillColor(sf::Color::Black);
+    crossesScore.setStyle(sf::Text::Bold | sf::Text::Underlined);
+    crossesScore.setPosition(360, 830);
+
+    hyphen.setFont(font);
+    hyphen.setString("-");
+    hyphen.setCharacterSize(40); // in pixels, not points!
+    hyphen.setFillColor(sf::Color::Black);
+    hyphen.setStyle(sf::Text::Bold | sf::Text::Underlined);
+    hyphen.setPosition(390, 830);
+
+    circlesScore.setFont(font);
+    circlesScore.setString(std::to_string(score[1]));
+    circlesScore.setCharacterSize(40); // in pixels, not points!
+    circlesScore.setFillColor(sf::Color::Black);
+    circlesScore.setStyle(sf::Text::Bold | sf::Text::Underlined);
+    circlesScore.setPosition(420, 830);
+
+    generateCircles(window, 485, 855, 27);
+    
+    window.draw(crossesScore);
+    window.draw(hyphen);
+    window.draw(circlesScore);
+
+}
+
 int main(){
 
     // SETTINGS
-    int windowSize = 800;
+    int windowWidth = 800;
+    int windowHeight = 950;
 
     sf::ContextSettings settings;
     settings.antialiasingLevel = 8;
 
     //RENDER WINDOW
-    sf::RenderWindow window(sf::VideoMode(windowSize, 850), "TicTacToe", sf::Style::Close, settings);
-    sf::RectangleShape background(sf::Vector2f(windowSize, 850));
+    sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "TicTacToe", sf::Style::Close, settings);
+    sf::RectangleShape background(sf::Vector2f(windowWidth, windowHeight));
     background.setFillColor(sf::Color::White);
     window.setVerticalSyncEnabled(true);
 
@@ -472,7 +513,6 @@ int main(){
             playerCoordsPlayed = playedCoords(leftMouseClickCoords);
 
             if (playerCoordsPlayed[0] != -1 && board[playerCoordsPlayed[0]][playerCoordsPlayed[1]] == " "){
-                // Ternary operator "Boolean operation" ? result if true : result if false;
                 string symbol = turn % 2 + 1 == 1 ? "X" : "O";
                 board[playerCoordsPlayed[0]][playerCoordsPlayed[1]] = symbol;
 
@@ -517,6 +557,8 @@ int main(){
                 gameRunning = false;
             }
         }        
+
+        generateScore(window, score);
 
         window.display();
         
