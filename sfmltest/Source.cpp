@@ -20,7 +20,7 @@ using namespace std;
 // TODO: Analyse implementing replayability features, such a playing a new game after one ends -> DONE
 // TODO: Analyse implementing a Scoreboard -> DONE
 // TODO: Add a draw scenario -> DONE
-// TODO: change array of the board to be of type char for better memory utilization
+// TODO: Separate the scoreboard numbers more for double digit scores -> DONE
 
 /*
     1|2|3
@@ -131,7 +131,7 @@ void generateWinningLine(sf::RenderWindow &window, int winLocation){
     sf::RectangleShape winningLine(sf::Vector2f(length, 10.f));
     winningLine.setFillColor(sf::Color::Green);
 
-    switch (winLocation) {
+    switch (winLocation){
         case 1:
             //top horizontal line
             winningLine.setPosition(100, 200);
@@ -217,72 +217,63 @@ int* playedCoords(int clickCoords[2]){
     int* coords = new int[2];
 
     //1
-    if (clickCoords[0] > 105 && clickCoords[0] < 295 && clickCoords[1] > 105 && clickCoords[1] < 295)
-    {
+    if (clickCoords[0] > 105 && clickCoords[0] < 295 && clickCoords[1] > 105 && clickCoords[1] < 295){
         coords[0] = 0;
         coords[1] = 0;
         return coords;
     }
 
     //2
-    if (clickCoords[0] > 305 && clickCoords[0] < 495 && clickCoords[1] > 105 && clickCoords[1] < 295)
-    {
+    if (clickCoords[0] > 305 && clickCoords[0] < 495 && clickCoords[1] > 105 && clickCoords[1] < 295){
         coords[0] = 0;
         coords[1] = 1;
         return coords;
     }
 
     //3
-    if (clickCoords[0] > 505 && clickCoords[0] < 695 && clickCoords[1] > 105 && clickCoords[1] < 295)
-    {
+    if (clickCoords[0] > 505 && clickCoords[0] < 695 && clickCoords[1] > 105 && clickCoords[1] < 295){
         coords[0] = 0;
         coords[1] = 2;
         return coords;
     }
 
     //4
-    if (clickCoords[0] > 105 && clickCoords[0] < 295 && clickCoords[1] > 305 && clickCoords[1] < 495)
-    {
+    if (clickCoords[0] > 105 && clickCoords[0] < 295 && clickCoords[1] > 305 && clickCoords[1] < 495){
         coords[0] = 1;
         coords[1] = 0;
         return coords;
     }
 
     // 5
-    if (clickCoords[0] > 305 && clickCoords[0] < 495 && clickCoords[1] > 305 && clickCoords[1] < 495)
-    {
+    if (clickCoords[0] > 305 && clickCoords[0] < 495 && clickCoords[1] > 305 && clickCoords[1] < 495){
         coords[0] = 1;
         coords[1] = 1;
         return coords;
     }
 
     //6
-    if (clickCoords[0] > 505 && clickCoords[0] < 695 && clickCoords[1] > 305 && clickCoords[1] < 495)
-    {
+    if (clickCoords[0] > 505 && clickCoords[0] < 695 && clickCoords[1] > 305 && clickCoords[1] < 495){
         coords[0] = 1;
         coords[1] = 2;
         return coords;
     }
 
     //7
-    if (clickCoords[0] > 105 && clickCoords[0] < 295 && clickCoords[1] > 505 && clickCoords[1] < 695)
-    {
+    if (clickCoords[0] > 105 && clickCoords[0] < 295 && clickCoords[1] > 505 && clickCoords[1] < 695){
         coords[0] = 2;
         coords[1] = 0;
         return coords;
     }
 
     // 8
-    if (clickCoords[0] > 305 && clickCoords[0] < 495 && clickCoords[1] > 505 && clickCoords[1] < 695)
-    {
+    if (clickCoords[0] > 305 && clickCoords[0] < 495 && clickCoords[1] > 505 && clickCoords[1] < 695){
         coords[0] = 2;
         coords[1] = 1;
         return coords;
     }
 
     //9
-    if (clickCoords[0] > 505 && clickCoords[0] < 695 && clickCoords[1] > 505 && clickCoords[1] < 695)
-    {
+    if (clickCoords[0] > 505 && clickCoords[0] < 695 && clickCoords[1] > 505 && clickCoords[1] < 695){
         coords[0] = 2;
         coords[1] = 2;
         return coords;
@@ -312,7 +303,7 @@ int winConditions(string board[3][3]){
         return board[0][0] == "X" ? 41 : 42;
     }
     if (board[0][1] == board[1][1] && board[0][1] == board[2][1] && board[0][1] != " " && board[1][1] != " " && board[2][1] != " "){
-        return board[0][1] == "X" ? 51 : 51;
+        return board[0][1] == "X" ? 51 : 52;
     }
     if (board[0][2] == board[1][2] && board[0][2] == board[2][2] && board[0][2] != " " && board[1][2] != " " && board[2][2] != " "){
         return board[0][2] == "X" ? 61 : 62;
@@ -427,12 +418,14 @@ void generateScore(sf::RenderWindow& window, int score[2]) {
 
     generateCrosses(window, 325, 850, 60);
 
+    int crossLocation = score[0] < 10 ? 360 : 350;
+
     crossesScore.setFont(font);
     crossesScore.setString(std::to_string(score[0]));
     crossesScore.setCharacterSize(40); // in pixels, not points!
     crossesScore.setFillColor(sf::Color::Black);
     crossesScore.setStyle(sf::Text::Bold | sf::Text::Underlined);
-    crossesScore.setPosition(360, 830);
+    crossesScore.setPosition(crossLocation, 830);
 
     hyphen.setFont(font);
     hyphen.setString("-");
@@ -448,7 +441,7 @@ void generateScore(sf::RenderWindow& window, int score[2]) {
     circlesScore.setStyle(sf::Text::Bold | sf::Text::Underlined);
     circlesScore.setPosition(420, 830);
 
-    generateCircles(window, 485, 855, 27);
+    generateCircles(window, 490, 855, 27);
     
     window.draw(crossesScore);
     window.draw(hyphen);
@@ -498,7 +491,6 @@ int main(){
                     }
                     break;
             }
-
         }
 
         window.clear();
@@ -515,10 +507,8 @@ int main(){
             if (playerCoordsPlayed[0] != -1 && board[playerCoordsPlayed[0]][playerCoordsPlayed[1]] == " "){
                 string symbol = turn % 2 + 1 == 1 ? "X" : "O";
                 board[playerCoordsPlayed[0]][playerCoordsPlayed[1]] = symbol;
-
                 turn++;
             }
-
             delete[] playerCoordsPlayed;
         }
 
@@ -531,7 +521,7 @@ int main(){
             generatePlayAgainBox(window);
 
             // YES Box clicked
-            if (leftMouseClickCoords[0] > 300 && leftMouseClickCoords[0] < 370 && leftMouseClickCoords[1]>375 && leftMouseClickCoords[1] < 425) {
+            if (leftMouseClickCoords[0] > 300 && leftMouseClickCoords[0] < 370 && leftMouseClickCoords[1]>375 && leftMouseClickCoords[1] < 425){
                 winCode = 0;
                 turn = 0;
 
@@ -540,20 +530,20 @@ int main(){
                 leftMouseClickCoords[1] = 0;
 
                 // reset board array
-                for (int row = 0; row < 3; row++) {
-                    for (int column = 0; column < 3; column++) {
+                for (int row = 0; row < 3; row++){
+                    for (int column = 0; column < 3; column++){
                         board[row][column] = " ";
                     }
                 }
 
                 // -1 means draw
-                if (winningPlayer != -1) {
+                if (winningPlayer != -1){
                     score[winningPlayer]++;
                 }
             }
             
             // NO box clicked
-            if (leftMouseClickCoords[0] > 425 && leftMouseClickCoords[0] < 495 && leftMouseClickCoords[1]>375 && leftMouseClickCoords[1] < 425) {
+            if (leftMouseClickCoords[0] > 425 && leftMouseClickCoords[0] < 495 && leftMouseClickCoords[1]>375 && leftMouseClickCoords[1] < 425){
                 gameRunning = false;
             }
         }        
